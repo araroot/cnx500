@@ -10,7 +10,6 @@ def fix_name(input_name):
 	fixed_name = re.sub(r'LIMITED$','',fixed_name)
 	fixed_name = re.sub(r'\s','',fixed_name)
 	return fixed_name
-	
 
 def read_symbols(fname, name2symbols):
 	i = 0
@@ -23,11 +22,23 @@ def read_symbols(fname, name2symbols):
 				company_name = fix_name(line[3]) 
 				name2symbols[company_name] = line[1]
 	return name2symbols
+	
+
+def read_current_list(fname, name2symbols):
+	i = 0
+	with open(fname, 'r') as csvfile:
+		reader = csv.reader(csvfile, delimiter = ',', quotechar='"')
+		for line in reader:
+			i += 1
+			if i == 1: continue # skip the header
+			company_name = fix_name(line[0]) 
+			name2symbols[company_name] = line[2]
+	return name2symbols
 
 def fix_symbols(fname, name2symbols):
 	i = 0
 	marked_entries = {}
-	outfile = open('to_fix.csv', 'w')
+	outfile = open('to_fix_cnx500.csv', 'w')
 	outfile.write('Name,Symbol,Auto\n')
 	with open(fname, 'r') as csvfile:
 		reader = csv.reader(csvfile, delimiter = ',', quotechar='"')
@@ -53,6 +64,5 @@ if __name__ == '__main__':
 	n2s = read_symbols('../symbols/ffix010611.csv', n2s)
 	n2s = read_symbols('../symbols/ffix010612.csv', n2s)
 	n2s = read_symbols('../symbols/ffix010113.csv', n2s)
-	print len(n2s)
-	#print n2s
+	n2s = read_current_list('../symbols/ind_cnx500list.csv', n2s)
 	fix_symbols('../symbols/cnx500_changes.csv', n2s)
