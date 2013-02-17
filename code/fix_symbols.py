@@ -67,8 +67,32 @@ def create_to_fix_list():
 	n2s = read_current_list('../symbols/cnx500_current.csv', n2s)
 	fix_symbols('../symbols/cnx500_changes.csv', n2s)
 
+def get_current_cnx500list(fname):
+	cnx500 = {}
+	i = 0
+	with open(fname, 'r') as csvfile:
+		reader = csv.reader(csvfile, delimiter = ',', quotechar='"')
+		for line in reader:
+			i += 1
+			if i == 1: continue # skip the header
+			cnx500[line[2]] = 1
+	return cnx500
+
+def get_cnx500_mappings(fname):
+	cnx500map = {}
+	i = 0
+	with open(fname, 'r') as csvfile:
+		reader = csv.reader(csvfile, delimiter = ',', quotechar='"')
+		for line in reader:
+			i += 1
+			if i == 1: continue # skip the header
+			cnx500map[line[0]] = line[1]
+	return cnx500map
+
+
 def create_cnx500_history():
-	# Read cnx500 current list
+	cnx500_current  = get_current_cnx500list('../symbols/cnx500_current.csv')
+	cnx500_mappings = get_cnx500_mappings('../symbols/cnx500_mappings.csv')
 	# Apply changes going from back to front
 	# Output the list as it existed at that point in time
 
