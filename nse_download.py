@@ -88,8 +88,8 @@ def download_fovolt(start_date, end_date, write_dir):
 	      continue
   
 if __name__ == '__main__':
-	from_date = datetime.datetime(1998, 1, 1)
-	to_date   = datetime.datetime(2013, 2, 10)
-	#download_bhav(from_date, to_date, '../fotest/', 'fo')
+	from_date = datetime.datetime(2013, 2, 1)
+	to_date   = datetime.datetime(2013, 2, 28)
+	download_bhav(from_date, to_date, '../fotest/', 'fo')
 	download_bhav(from_date, to_date, '../eqbhav/', 'cm')
 	#download_fovolt(from_date, to_date, '../fovolt/')
