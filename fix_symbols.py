@@ -57,12 +57,21 @@ def fix_symbols(fname, name2symbols):
 				outfile.write('%s,%s,0\n'%(line[2], line[1]))
 	outfile.close()
 
-if __name__ == '__main__':
+def create_to_fix_list():
 	n2s = {}
-	n2s = read_symbols('../symbols/Ix010609.csv', n2s)
-	n2s = read_symbols('../symbols/Ix010610.csv', n2s)
-	n2s = read_symbols('../symbols/ffix010611.csv', n2s)
-	n2s = read_symbols('../symbols/ffix010612.csv', n2s)
-	n2s = read_symbols('../symbols/ffix010113.csv', n2s)
-	n2s = read_current_list('../symbols/ind_cnx500list.csv', n2s)
+	#n2s = read_symbols('../symbols/extras/Ix010609.csv', n2s)
+	#n2s = read_symbols('../symbols/extras/Ix010610.csv', n2s)
+	#n2s = read_symbols('../symbols/extras/ffix010611.csv', n2s)
+	#n2s = read_symbols('../symbols/extras/ffix010612.csv', n2s)
+	#n2s = read_symbols('../symbols/extras/ffix010113.csv', n2s)
+	n2s = read_current_list('../symbols/cnx500_current.csv', n2s)
 	fix_symbols('../symbols/cnx500_changes.csv', n2s)
+
+def create_cnx500_history():
+	# Read cnx500 current list
+	# Apply changes going from back to front
+	# Output the list as it existed at that point in time
+
+if __name__ == '__main__':
+	#create_to_fix_list() # Will create a file which needs manual fixing
+	create_cnx500_history()

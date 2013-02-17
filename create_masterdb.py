@@ -45,9 +45,7 @@ def create_symbol_db(start_date, end_date):
         
 	return master_db
 	
-def output_db(master_db, valid_symbols, outdir):
-	dbgfile = open(outdir + 'debug' + '.csv', 'w')
-	dbgfile.write('symbol,date,return,corrected\n')
+def output_db(master_db, valid_symbols, outdir, debug_file):
 	for symbol in master_db:
 		outfile = open(outdir + symbol + '.csv', 'w')
 		outfile.write('symbol,date,return\n')
@@ -57,11 +55,10 @@ def output_db(master_db, valid_symbols, outdir):
 			date_str = datetime.datetime.strftime(k,'%d-%b-%Y')
 			days_ret = entries[k]
 			if days_ret < -0.25 and symbol in valid_symbols: 
-				dbgfile.write('%s,%s,%.4f,%d\n'%(symbol,date_str,days_ret,0)) 
+				debug_file.write('%s,%s,%.4f,%d\n'%(symbol,date_str,days_ret,0)) 
 			outfile.write('%s,%s,%.4f\n'%(symbol,date_str,days_ret))
 		outfile.close()
-	
-	dbgfile.close()
+
 
 def read_cnx500_mappings(fname):
 	cnx500_list = {}
@@ -75,15 +72,17 @@ def read_cnx500_mappings(fname):
 
 if __name__ == '__main__':
 	cnx500_masterlist = read_cnx500_mappings('../symbols/cnx500_mappings.csv')
-	for year in range(2010, 2013):
+	dbgfile = open('../symbolwise/debug.csv', 'w')
+	dbgfile.write('symbol,date,return,corrected\n')
+	for year in range(2003, 2013):
 		from_date = datetime.datetime(year, 1, 1)
 		to_date   = datetime.datetime(year, 12, 31)
 		my_db = create_symbol_db(from_date, to_date)
-		output_db(my_db, cnx500_masterlist, '../symbolwise/' + str(year) + '/')
+		output_db(my_db, cnx500_masterlist, '../symbolwise/' + str(year) + '/', dbgfile)
 	# special processing for year 2013
 	year = 2013
 	from_date = datetime.datetime(year, 1, 1)
 	to_date   = datetime.datetime(year, 2, 28)
 	my_db = create_symbol_db(from_date, to_date)
-	output_db(my_db, cnx500_masterlist, '../symbolwise/' + str(year) + '/')
-	
+	output_db(my_db, cnx500_masterlist, '../symbolwise/' + str(year) + '/', dbgfile)
+	dbgfile.close()
