@@ -6,7 +6,7 @@ import math
 
 def check_sanity(input_line):
 	if len(input_line) < 5:
-		print 'Failed Sanity check: ',line 
+		print 'Failed Sanity check: ',input_line 
 		return False  
 	
 	if not(input_line[1] == 'EQ' or input_line[1] == 'BE'):
@@ -71,18 +71,11 @@ def read_cnx500_mappings(fname):
 	
 
 if __name__ == '__main__':
-	cnx500_masterlist = read_cnx500_mappings('../symbols/cnx500_mappings.csv')
+	cnx500_masterlist = read_cnx500_mappings('../symbols/cnx500_history_all.csv')
 	dbgfile = open('../symbolwise/debug.csv', 'w')
 	dbgfile.write('symbol,date,return,corrected\n')
-	for year in range(2003, 2013):
-		from_date = datetime.datetime(year, 1, 1)
-		to_date   = datetime.datetime(year, 12, 31)
-		my_db = create_symbol_db(from_date, to_date)
-		output_db(my_db, cnx500_masterlist, '../symbolwise/' + str(year) + '/', dbgfile)
-	# special processing for year 2013
-	year = 2013
-	from_date = datetime.datetime(year, 1, 1)
-	to_date   = datetime.datetime(year, 2, 28)
+	from_date = datetime.datetime(1999, 1, 1)
+	to_date   = datetime.datetime(2013, 2, 28)
 	my_db = create_symbol_db(from_date, to_date)
-	output_db(my_db, cnx500_masterlist, '../symbolwise/' + str(year) + '/', dbgfile)
+	output_db(my_db, cnx500_masterlist, '../symbolwise/', dbgfile)
 	dbgfile.close()
