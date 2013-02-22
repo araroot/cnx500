@@ -35,11 +35,12 @@ def create_symbol_db(start_date, end_date):
 					scrip = line[0]
 					if scrip not in master_db: master_db[scrip] = {}
 					try:
-						scrip_return = math.log(float(line[5]) / float(line[7]))
+						scrip_return_cc = math.log(float(line[5]) / float(line[7])) # close2close
+						scrip_return_oc = math.log(float(line[5]) / float(line[2])) # open2close
 					except (ValueError, ZeroDivisionError):
 						print 'DEBUG, error', line
 						continue
-					master_db[scrip][current_date] = scrip_return
+					master_db[scrip][current_date] = (scrip_return_cc, scrip_return_oc)
 			os.remove(fname)
 		fh.close()
         
@@ -53,10 +54,13 @@ def output_db(master_db, valid_symbols, outdir, debug_file):
 		mykeys = sorted(entries)
 		for k in mykeys: 
 			date_str = datetime.datetime.strftime(k,'%d-%b-%Y')
-			days_ret = entries[k]
-			if days_ret < -0.25 and symbol in valid_symbols: 
-				debug_file.write('%s,%s,%.4f,%d\n'%(symbol,date_str,days_ret,0)) 
-			outfile.write('%s,%s,%.4f\n'%(symbol,date_str,days_ret))
+			days_ret_cc, days_ret_oc = entries[k]
+			if days_ret_cc < -0.25 and symbol in valid_symbols:
+				if days_ret_oc > -0.10:  						# likely corporate action
+					debug_file.write('%s,%s,%.4f,%d\n'%(symbol,date_str,days_ret_cc,0)) 
+					days_ret_cc = 0.0
+				# no else required, else means days_ret_oc is also very low and that's OK	
+			outfile.write('%s,%s,%.4f\n'%(symbol,date_str,days_ret_cc))
 		outfile.close()
 
 
@@ -74,7 +78,7 @@ if __name__ == '__main__':
 	cnx500_masterlist = read_cnx500_mappings('../symbols/cnx500_history_all.csv')
 	dbgfile = open('../symbolwise/debug.csv', 'w')
 	dbgfile.write('symbol,date,return,corrected\n')
-	from_date = datetime.datetime(1999, 1, 1)
+	from_date = datetime.datetime(2004, 1, 1)
 	to_date   = datetime.datetime(2013, 2, 28)
 	my_db = create_symbol_db(from_date, to_date)
 	output_db(my_db, cnx500_masterlist, '../symbolwise/', dbgfile)

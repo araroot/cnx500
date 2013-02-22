@@ -26,28 +26,6 @@ def get_symbol_changes(fname):
 			sym_changes[line[2]]  = (line[1], effective_date)
 	return sym_changes
 
-def fix_symbols(fname, name2symbols):
-	i = 0
-	marked_entries = {}
-	outfile = open('to_fix_cnx500.csv', 'w')
-	outfile.write('Name,Symbol,Auto\n')
-	with open(fname, 'r') as csvfile:
-		reader = csv.reader(csvfile, delimiter = ',', quotechar='"')
-		for line in reader:
-			i += 1
-			if i == 1: continue # skip the header
-			company_name = fix_name(line[2])
-			if company_name in marked_entries: 
-				continue # already considered
-			else: 
-				marked_entries[company_name] = 1
-			
-			if company_name in name2symbols: 
-				outfile.write('%s,%s,1\n'%(line[2], name2symbols[company_name]))
-			else:
-				outfile.write('%s,%s,0\n'%(line[2], line[1]))
-	outfile.close()
-
 
 def get_cnx500list(fname, month_stamp):
 	cnx500 = []
@@ -98,7 +76,7 @@ def get_cnx500_changes(fname, name2symbols, sym_changes):
 def adjust_for_symbolchange(cutoff, symbol, sym_changes):
 	if symbol in sym_changes and cutoff < sym_changes[symbol][1]:
 		adjusted_symbol = sym_changes[symbol][0]
-		print 'DEBUG: returning %s instead of %s'%(adjusted_symbol,symbol)
+		#print 'DEBUG: returning %s instead of %s'%(adjusted_symbol,symbol)
 		return adjusted_symbol
 	else:
 		return symbol
@@ -129,10 +107,10 @@ def create_cnx500_history():
 	symbol_changes  = get_symbol_changes('../symbols/symbolchange.csv')
 	cnx500_changes  = get_cnx500_changes('../symbols/cnx500_changes.csv', eq_mappings, symbol_changes)
 	#print cnx500_changes
-	output_file = open('../symbols/cnx500history_old.csv', 'w')
-	output_file.write('Date,Symbol\n')
-	for year in reversed(range(2001, 2010)):
+	output_file = open('../symbols/cnx500history_replayed.csv', 'w')
+	for year in reversed(range(2004, 2010)):
 		for month in reversed(range(1,13)):
+			if year == 2009 and month >=5 : continue # we already have clean data till here
 			cutoff_date = datetime.datetime(year, month, 1)
 			print_cnx500_list(cnx500_may09, cnx500_changes, cutoff_date, output_file, symbol_changes)
 	output_file.close() 
