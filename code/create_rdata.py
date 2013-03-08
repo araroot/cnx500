@@ -51,12 +51,12 @@ def create_rdata(on_date, ofile):
 		ofile.write('%s,%s,%s\n'%(out_stamp,symbol,output_data))
 		
 if __name__ == '__main__':
-	outfile = open('data4r.csv','w')
+	outfile = open('data4r0.csv','w')
 	header_str = ''
 	for i in range(0,14): header_str = header_str + ',r'+str(i)
 	outfile.write('stamp,symbol%s\n'%header_str)
 	
-	for year in range(2008, 2013):
+	for year in range(2005, 2008):
 		for month in range(1,13):
 			cutoff_date = datetime.datetime(year, month, 1)
 			create_rdata(cutoff_date, outfile)

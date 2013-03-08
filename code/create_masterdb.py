@@ -55,12 +55,12 @@ def output_db(master_db, valid_symbols, outdir, debug_file):
 		for k in mykeys: 
 			date_str = datetime.datetime.strftime(k,'%d-%b-%Y')
 			days_ret_cc, days_ret_oc = entries[k]
-			if days_ret_cc < -0.25 and symbol in valid_symbols:
-				if days_ret_oc > -0.10:  						# likely corporate action
-					debug_file.write('%s,%s,%.4f,%d\n'%(symbol,date_str,days_ret_cc,0)) 
-					days_ret_cc = 0.0
+			if days_ret_cc < -0.25: # and condition is BUG!
+				if days_ret_oc > -0.15:  						# likely corporate action
+					debug_file.write('%s,%s,%.6f,%d\n'%(symbol,date_str,days_ret_cc,0)) 
+					days_ret_cc = days_ret_oc
 				# no else required, else means days_ret_oc is also very low and that's OK	
-			outfile.write('%s,%s,%.4f\n'%(symbol,date_str,days_ret_cc))
+			outfile.write('%s,%s,%.6f\n'%(symbol,date_str,days_ret_cc))
 		outfile.close()
 
 
